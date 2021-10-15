@@ -1,6 +1,7 @@
 /*Initial Declaration */
 
 const Status = document.querySelector('.game--status');
+const restart =document.querySelector('.restart') as HTMLButtonElement;
 const X_turn = 'X';
 const O_turn = 'O';
 const winningConditions = [
@@ -20,15 +21,15 @@ const WinningMessage =() => `Player ${currentPlayer} has won.`
 let Active = true;
 let currentPlayer = X_turn;
 let gameState = ["","","","","","","","",""];
-
+if(Status)
 Status.innerHTML = playerTurn();
-
 /*Handle cell click*/
 function cellClick(clickedCellEvent : Event){
  const clicked = clickedCellEvent.target as HTMLButtonElement;
- const clickedCellIndex = parseInt(clicked.getAttribute(`data-cell-index`));
+ const clickedCellIndex = parseInt(clicked.getAttribute(`data-cell-index`)|| "9");
 
-if(gameState[clickedCellIndex] !== "" || !Active)
+
+if(gameState[clickedCellIndex] !== "" || !Active || gameState[clickedCellIndex]== null)
 {
     return;
 }
@@ -64,14 +65,14 @@ function resultValidation()
        break;
      }
     }
-     if(won)
+     if(won && Status)
      {
         Status.innerHTML = WinningMessage();
         Active = false;
         return;
      }
     
-    if(!gameState.includes(""))
+    if(!gameState.includes("") && Status)
     {
         Status.innerHTML = DrawMessage();
         Active= false;
@@ -84,6 +85,7 @@ function resultValidation()
 /*change current player */
 function PlayerChange() {
     currentPlayer = currentPlayer === X_turn ? O_turn : X_turn;
+    if(Status)
     Status.innerHTML = playerTurn();
 }
 
@@ -92,9 +94,10 @@ function GameRestart() {
     Active = true;
     currentPlayer = X_turn;
     gameState=["","","","","","","","",""];
+    if(Status)
     Status.innerHTML = playerTurn();
     document.querySelectorAll('.cell').forEach(cell=> cell.innerHTML = "");
 
 }
 document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', cellClick));
-document.querySelector('.restart').addEventListener('click',GameRestart);
+restart.addEventListener('click',GameRestart);
