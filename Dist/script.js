@@ -1,6 +1,7 @@
 "use strict";
 /*Initial Declaration */
 var Status = document.querySelector('.game--status');
+var restart = document.querySelector('.restart');
 var X_turn = 'X';
 var O_turn = 'O';
 var winningConditions = [
@@ -19,12 +20,13 @@ var WinningMessage = function () { return "Player " + currentPlayer + " has won.
 var Active = true;
 var currentPlayer = X_turn;
 var gameState = ["", "", "", "", "", "", "", "", ""];
-Status.innerHTML = playerTurn();
+if (Status)
+    Status.innerHTML = playerTurn();
 /*Handle cell click*/
 function cellClick(clickedCellEvent) {
     var clicked = clickedCellEvent.target;
-    var clickedCellIndex = parseInt(clicked.getAttribute("data-cell-index"));
-    if (gameState[clickedCellIndex] !== "" || !Active) {
+    var clickedCellIndex = parseInt(clicked.getAttribute("data-cell-index") || "9");
+    if (gameState[clickedCellIndex] !== "" || !Active || gameState[clickedCellIndex] == null) {
         return;
     }
     cellPlayed(clicked, clickedCellIndex);
@@ -51,12 +53,12 @@ function resultValidation() {
             break;
         }
     }
-    if (won) {
+    if (won && Status) {
         Status.innerHTML = WinningMessage();
         Active = false;
         return;
     }
-    if (!gameState.includes("")) {
+    if (!gameState.includes("") && Status) {
         Status.innerHTML = DrawMessage();
         Active = false;
         return;
@@ -66,15 +68,17 @@ function resultValidation() {
 /*change current player */
 function PlayerChange() {
     currentPlayer = currentPlayer === X_turn ? O_turn : X_turn;
-    Status.innerHTML = playerTurn();
+    if (Status)
+        Status.innerHTML = playerTurn();
 }
 /*restart */
 function GameRestart() {
     Active = true;
     currentPlayer = X_turn;
     gameState = ["", "", "", "", "", "", "", "", ""];
-    Status.innerHTML = playerTurn();
+    if (Status)
+        Status.innerHTML = playerTurn();
     document.querySelectorAll('.cell').forEach(function (cell) { return cell.innerHTML = ""; });
 }
 document.querySelectorAll('.cell').forEach(function (cell) { return cell.addEventListener('click', cellClick); });
-document.querySelector('.restart').addEventListener('click', GameRestart);
+restart.addEventListener('click', GameRestart);
